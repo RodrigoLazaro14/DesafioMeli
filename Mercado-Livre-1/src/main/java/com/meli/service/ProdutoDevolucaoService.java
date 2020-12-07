@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meli.model.Desistencia;
 import com.meli.model.ProdutoDevolucao;
+import com.meli.model.TrocaModel;
+import com.meli.repository.DesistenciaCrudRepository;
+import com.meli.repository.DesistenciaRepository;
 import com.meli.repository.ProdutoDevolucaoCrudRepository;
+import com.meli.repository.TrocaRepository;
 
 @RestController
 @Service
@@ -17,7 +21,16 @@ public class ProdutoDevolucaoService {
 	@Autowired
 	private ProdutoDevolucaoCrudRepository produtoDevolucaoCrudRepository;
 	
-
+	@Autowired
+	private DesistenciaCrudRepository desistenciaCrudRepository;
+	
+	@Autowired
+	private DesistenciaRepository desistenciaRepository;
+	
+	@Autowired
+	private TrocaRepository trocaRepository;
+	
+	
 	public ProdutoDevolucao produtoDevolucao = new ProdutoDevolucao();
 	public Desistencia desistencia = new Desistencia();
 	
@@ -35,7 +48,7 @@ public class ProdutoDevolucaoService {
 	}
 	*/
 
-	@PostMapping
+	//@PostMapping
 	public Object separarProdutos() {
 		
 		if(produtoDevolucao.getCategoria().getSiglaCategoria() == "EL") {
@@ -50,9 +63,20 @@ public class ProdutoDevolucaoService {
 					desistencia.setNomeProdutoDesistencia(produtoDevolucao.getNomeProdutoDevolucao());
 					desistencia.setCategoria(produtoDevolucao.getCategoria());
 					desistencia.setMarca(produtoDevolucao.getMarca());
-//					desistencia.setCodigoDevolucao(testeDevolucao.getCodigoDevolucao());				
-						
-				} /*else if(motivoDevolucao.getSiglaMotivoDevolucaoModel() == "IN" && testeDevolucao.getCodigoDevolucao().toLowerCase().contains(motivoDevolucao.getSiglaMotivoDevolucaoModel().toLowerCase())) {
+//					desistencia.setCodigoDevolucao(testeDevolucao.getCodigoDevolucao());
+					
+					desistencia = this.desistenciaRepository.save(desistencia);
+					
+					
+				
+				} else if(produtoDevolucao.getMotivo().getSiglaMotivoDevolucao() == "TR") {
+					TrocaModel troca = new TrocaModel();
+					troca.setIdProdutoDevolucao(produtoDevolucao.getIdProdutoDevolucao());
+					troca.setProdutoDevolucao(produtoDevolucao);
+					this.trocaRepository.save(troca);
+				}
+					
+					/*else if(motivoDevolucao.getSiglaMotivoDevolucaoModel() == "IN" && testeDevolucao.getCodigoDevolucao().toLowerCase().contains(motivoDevolucao.getSiglaMotivoDevolucaoModel().toLowerCase())) {
 				
 					produtoDevolucao.setCodigoDevolucao(testeDevolucao.getCodigoDevolucao());
 
@@ -72,7 +96,7 @@ public class ProdutoDevolucaoService {
 			System.out.println("ABREVIAÇÃO CATEGORIA NÃO FUNCIONOU!");
 		}*/
 
-		return "";
+		return separarProdutos();
 	}
 	
 }
